@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // --- Audio helpers ---
 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -6,20 +6,17 @@ const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 function playBarTone(audioCtx, fundamentalFreq) {
   if (!audioCtx) return;
 
-  // Some browsers need a resumed context after user interaction
   if (audioCtx.state === "suspended") {
     audioCtx.resume();
   }
 
   const now = audioCtx.currentTime;
 
-  // Gain envelope (quick attack, natural decay)
   const gain = audioCtx.createGain();
   gain.gain.setValueAtTime(0, now);
   gain.gain.linearRampToValueAtTime(0.7, now + 0.01);
   gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
 
-  // Inharmonic partials (approximate metal bars)
   const partials = [1, 2.76, 5.4, 8.93];
 
   partials.forEach((ratio, i) => {
@@ -38,11 +35,8 @@ function playBarTone(audioCtx, fundamentalFreq) {
   gain.connect(audioCtx.destination);
 }
 
-// --- Physics-inspired conversions ---
-// Vibrating bar relationship:
-//   f ∝ 1 / L²
-// Inverted form used here:
-//   f = f₀ * (L₀ / L)²
+// --- Physics conversions ---
+// f = f₀ * (L₀ / L)²
 
 function frequencyFromBarLength(length, referenceFreq, referenceLength) {
   return referenceFreq * Math.pow(referenceLength / length, 2);
@@ -60,14 +54,11 @@ export default function HarmonicBars() {
     return () => audioCtxRef.current?.close();
   }, []);
 
-  // Base reference (longest bar)
   const baseFrequency = 220; // Hz
   const baseLength = 320; // px
 
-  // Initial harmonic ratios (starting tuning only)
   const harmonics = [1, 4 / 3, 3 / 2, 2, 8 / 3, 3, 4];
 
-  // Length is now the source of truth
   const [bars, setBars] = useState(() =>
     harmonics.map((ratio, i) => {
       const freq = baseFrequency * ratio;
@@ -76,10 +67,22 @@ export default function HarmonicBars() {
         baseFrequency,
         baseLength
       );
-
       return { id: i, length };
     })
   );
+
+  const nextId = useRef(bars.length);
+
+  function addBar() {
+    setBars((prev) => [
+      ...prev,
+      { id: nextId.current++, length: baseLength }
+    ]);
+  }
+
+  function deleteBar(id) {
+    setBars((prev) => prev.filter((bar) => bar.id !== id));
+  }
 
   return (
     <div className="min-h-screen bg-zinc-900 text-white flex flex-col items-center justify-center gap-4 p-8">
@@ -111,46 +114,56 @@ export default function HarmonicBars() {
               />
 
               <div className="flex items-center gap-2">
-  <input
-    type="range"
-    min={140}
-    max={380}
-    value={bar.length}
-    onChange={(e) =>
-      setBars((prev) =>
-        prev.map((b) =>
-          b.id === bar.id
-            ? { ...b, length: Number(e.target.value) }
-            : b
-        )
-      )
-    }
-  />
+                <input
+                  type="range"
+                  min={140}
+                  max={380}
+                  value={bar.length}
+                  onChange={(e) =>
+                    setBars((prev) =>
+                      prev.map((b) =>
+                        b.id === bar.id
+                          ? { ...b, length: Number(e.target.value) }
+                          : b
+                      )
+                    )
+                  }
+                />
 
-  <input
-    type="number"
-    min={140}
-    max={380}
-    step={1}
-    value={Math.round(bar.length)}
-    onChange={(e) => {
-      const value = Number(e.target.value);
-      if (!Number.isNaN(value)) {
-        setBars((prev) =>
-          prev.map((b) =>
-            b.id === bar.id
-              ? {
-                  ...b,
-                  length: Math.min(380, Math.max(140, value)),
-                }
-              : b
-          )
-        );
-      }
-    }}
-    className="w-20 px-2 py-1 text-black rounded"
-  />
-</div>
+                <input
+                  type="number"
+                  min={140}
+                  max={380}
+                  step={1}
+                  value={Math.round(bar.length)}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    if (!Number.isNaN(value)) {
+                      setBars((prev) =>
+                        prev.map((b) =>
+                          b.id === bar.id
+                            ? {
+                                ...b,
+                                length: Math.min(
+                                  380,
+                                  Math.max(140, value)
+                                ),
+                              }
+                            : b
+                        )
+                      );
+                    }
+                  }}
+                  className="w-20 px-2 py-1 text-black rounded"
+                />
+
+                <button
+                  onClick={() => deleteBar(bar.id)}
+                  className="px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-sm"
+                >
+                  Delete
+                </button>
+              </div>
 
               <span className="text-xs text-zinc-400">
                 Length: {Math.round(bar.length)} px · Frequency:{" "}
@@ -161,7 +174,14 @@ export default function HarmonicBars() {
         })}
       </div>
 
-      <p className="text-sm text-zinc-400 mt-6 max-w-md text-center">
+      <button
+        onClick={addBar}
+        className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 rounded"
+      >
+        Add Bar
+      </button>
+
+      <p className="text-sm text-zinc-400 mt-4 max-w-md text-center">
         Drag the sliders to change bar length. Pitch is recalculated
         using real vibrating-bar physics (frequency ∝ 1 / length²),
         not musical note tables.
