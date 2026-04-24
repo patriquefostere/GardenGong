@@ -1,18 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import playBarTone from './helpers/playBarTone'
+import {barLengthFromFrequency, frequencyFromBarLength} from './helpers/physicsConversions.js'
+
 // --- Audio helpers ---
 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 
 // --- Physics conversions ---
 // f = f₀ * (L₀ / L)²
 
-function frequencyFromBarLength(length, referenceFreq, referenceLength) {
-  return referenceFreq * Math.pow(referenceLength / length, 2);
-}
 
-function barLengthFromFrequency(freq, referenceFreq, referenceLength) {
-  return referenceLength * Math.sqrt(referenceFreq / freq);
-}
 
 export default function HarmonicBars() {
   const audioCtxRef = useRef(null);
