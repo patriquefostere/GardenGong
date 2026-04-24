@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // --- Audio helpers ---
 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -110,21 +110,47 @@ export default function HarmonicBars() {
                 }}
               />
 
-              <input
-                type="range"
-                min={140}
-                max={380}
-                value={bar.length}
-                onChange={(e) =>
-                  setBars((prev) =>
-                    prev.map((b) =>
-                      b.id === bar.id
-                        ? { ...b, length: Number(e.target.value) }
-                        : b
-                    )
-                  )
+              <div className="flex items-center gap-2">
+  <input
+    type="range"
+    min={140}
+    max={380}
+    value={bar.length}
+    onChange={(e) =>
+      setBars((prev) =>
+        prev.map((b) =>
+          b.id === bar.id
+            ? { ...b, length: Number(e.target.value) }
+            : b
+        )
+      )
+    }
+  />
+
+  <input
+    type="number"
+    min={140}
+    max={380}
+    step={1}
+    value={Math.round(bar.length)}
+    onChange={(e) => {
+      const value = Number(e.target.value);
+      if (!Number.isNaN(value)) {
+        setBars((prev) =>
+          prev.map((b) =>
+            b.id === bar.id
+              ? {
+                  ...b,
+                  length: Math.min(380, Math.max(140, value)),
                 }
-              />
+              : b
+          )
+        );
+      }
+    }}
+    className="w-20 px-2 py-1 text-black rounded"
+  />
+</div>
 
               <span className="text-xs text-zinc-400">
                 Length: {Math.round(bar.length)} px · Frequency:{" "}
