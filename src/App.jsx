@@ -1,13 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import playBarTone from './helpers/playBarTone'
 import {barLengthFromFrequency, frequencyFromBarLength} from './helpers/physicsConversions.js'
+import { AddBarButton } from "./components/AddBarButton.js";
 
-// --- Audio helpers ---
 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-
-// --- Physics conversions ---
-// f = f₀ * (L₀ / L)²
-
 
 
 export default function HarmonicBars() {
@@ -51,7 +47,7 @@ export default function HarmonicBars() {
   return (
     <div className="min-h-screen bg-zinc-900 text-white flex flex-col items-center justify-center gap-4 p-8">
       <h1 className="text-2xl font-semibold mb-4">
-        Adjustable Harmonic Bar Instrument
+        Adjustable Harmonic Bar Simulator
       </h1>
 
       <div className="flex flex-col gap-4">
@@ -138,12 +134,7 @@ export default function HarmonicBars() {
         })}
       </div>
 
-      <button
-        onClick={addBar}
-        className="mt-4 px-4 py-2 bg-green-600 hover:bg-green-700 rounded"
-      >
-        Add Bar
-      </button>
+      <AddBarButton addBar={addBar}/>
 
       <p className="text-sm text-zinc-400 mt-4 max-w-md text-center">
         Drag the sliders to change bar length. Pitch is recalculated
