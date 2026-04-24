@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import playBarTone from './helpers/playBarTone'
 import {barLengthFromFrequency, frequencyFromBarLength} from './helpers/physicsConversions.js'
 import { AddBarButton } from "./components/AddBarButton.js";
+import { BarInfo } from "./components/BarInfo.js";
 
 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 
@@ -125,10 +126,7 @@ export default function HarmonicBars() {
                 </button>
               </div>
 
-              <span className="text-xs text-zinc-400">
-                Length: {Math.round(bar.length)} px · Frequency:{" "}
-                {freq.toFixed(1)} Hz
-              </span>
+              <BarInfo bar={bar} freq={freq}/>
             </div>
           );
         })}
