@@ -8,6 +8,8 @@ import { AddBarButton } from "./components/AddBarButton";
 import { BarInfo } from "./components/BarInfo.js";
 import { LengthInput } from "./components/LengthInput";
 import { LengthSlider } from "./components/LengthSlider";
+import { DeleteButton } from "./components/DeleteButton";
+import { Bar } from "./components/Bar.js";
 
 const AudioContextClass =
   window.AudioContext || (window as any).webkitAudioContext;
@@ -64,26 +66,15 @@ export default function HarmonicBars() {
 
           return (
             <div key={bar.id} className="flex flex-col gap-1">
-              <div
+              <Bar
+                bar={bar}
                 onClick={() => playBarTone(audioCtxRef.current, freq)}
-                className="cursor-pointer rounded-lg shadow-inner"
-                style={{
-                  width: `${bar.length}px`,
-                  height: "28px",
-                  background: "linear-gradient(180deg, #d6b36a, #8f6b2f)",
-                }}
               />
 
               <div className="flex items-center gap-2">
                 <LengthSlider bar={bar} onChangeLength={updateBarLength} />
                 <LengthInput bar={bar} onChangeLength={updateBarLength} />
-
-                <button
-                  onClick={() => deleteBar(bar.id)}
-                  className="px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-sm"
-                >
-                  Delete
-                </button>
+                <DeleteButton id={bar.id} onDelete={deleteBar} />
               </div>
 
               <BarInfo bar={bar} freq={freq} />

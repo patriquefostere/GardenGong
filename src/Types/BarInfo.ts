@@ -1,4 +1,4 @@
-export interface Bar {
+export interface BarInfo {
   id: number;
   length: number;
 }

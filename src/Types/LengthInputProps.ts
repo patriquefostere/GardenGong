@@ -1,5 +1,5 @@
-import { Bar } from "./Bar";
+import { BarInfo } from "./BarInfo";
 export type LengthInputProps = {
-  bar: Bar;
+  bar: BarInfo;
   onChangeLength: (id: number, length: number) => void;
 };
