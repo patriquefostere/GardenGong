@@ -1,4 +1,4 @@
-export function AddBarButton({ addBar }: { addBar: () => {} }) {
+export function AddBarButton({ addBar }: { addBar: () => void }) {
   return (
     <button
       onClick={addBar}
