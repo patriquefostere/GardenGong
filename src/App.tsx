@@ -52,9 +52,7 @@ export default function HarmonicBars() {
 
   return (
     <div className="min-h-screen bg-zinc-900 text-white flex flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-semibold mb-4">
-        Adjustable Harmonic Bar Simulator
-      </h1>
+      <h1 className="text-2xl font-semibold mb-4">Glockenspiel Simulator</h1>
 
       <div className="flex flex-col gap-4">
         {bars.map((bar) => {
