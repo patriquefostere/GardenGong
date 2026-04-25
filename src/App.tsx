@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import playBarTone from "./helpers/playBarTone";
+import playBarTone from "./helpers/playBarTone.js";
 import {
   barLengthFromFrequency,
   frequencyFromBarLength,

@@ -1,5 +1,7 @@
-
-export default function playBarTone(audioCtx, fundamentalFreq) {
+export default function playBarTone(
+  audioCtx: AudioContext | null,
+  fundamentalFreq: number,
+) {
   if (!audioCtx) return;
 
   if (audioCtx.state === "suspended") {
