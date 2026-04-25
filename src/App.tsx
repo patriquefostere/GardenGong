@@ -11,8 +11,13 @@ import { LengthSlider } from "./components/LengthSlider";
 import { DeleteButton } from "./components/DeleteButton";
 import { Bar } from "./components/Bar.js";
 
-const AudioContextClass =
-  window.AudioContext || (window as any).webkitAudioContext;
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
+
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 
 export default function HarmonicBars() {
   const audioCtxRef = useRef<AudioContext | null>(null);
